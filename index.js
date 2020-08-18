@@ -6,11 +6,10 @@ const json = fs.readFileSync(`${__dirname}/data/data.json`, 'utf-8');
 const laptopData = JSON.parse(json);
 
 const server = http.createServer((request, response) => {
-    console.log("Someone accessed the server");
-
     if(request.url !== '/favicon.ico') {
         
         const pathName = url.parse(request.url, true).pathname;
+        console.log(pathName);
         const id = url.parse(request.url, true).query.id;
         
         // Product overview
@@ -40,6 +39,14 @@ const server = http.createServer((request, response) => {
                 response.end(output);
             });
 
+        }
+
+        // Route images
+        else if((/\.(jpg|jpeg|png|gif)$/i).test(pathName)) {
+            fs.readFile(`${__dirname}/data/img${pathName}`, (error, data) => {
+                response.writeHead(200, { 'Content-Type': 'image/jpg'});
+                response.end(data);
+            })
         }
 
         // URL not found
